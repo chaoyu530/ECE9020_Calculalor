@@ -1,0 +1,127 @@
+<FORM name="mycalc">
+    <input name="mydisp" type="Text" size=10 value="0" > <br>
+    <input type="Button" value="MS" onclick="memoryStore()">
+    <input type="Button" value="MR" onclick="memoryRecall()">
+    <input type="Button" value="MC" onclick="memoryClear()"> 
+    <input type="Button" value="C" onclick="clearDisplay()"> <br>
+    <input type="Button" value="(" onclick="parenKey('(')"> 
+    <input type="Button" value=")" onclick="parenKey(')')"> <br>
+    <input type="Button" value="7" onclick="digitKey('7')">
+    <input type="Button" value="8" onclick="digitKey('8')">
+    <input type="Button" value="9" onclick="digitKey('9')">
+    <input type="Button" value="X" onclick="oprKey('*')"> <br>
+    <input type="Button" value="4" onclick="digitKey('4')">
+    <input type="Button" value="5" onclick="digitKey('5')">
+    <input type="Button" value="6" onclick="digitKey('6')">
+    <input type="Button" value="/" onclick="oprKey('/')"> <br>
+    <input type="Button" value="1" onclick="digitKey('1')">
+    <input type="Button" value="2" onclick="digitKey('2')">
+    <input type="Button" value="3" onclick="digitKey('3')">
+    <input type="Button" value="-" onclick="oprKey('-')"> <br>
+    <input type="Button" value="0" onclick="digitKey('0')">
+    <input type="Button" value="." onclick="digitKey('.')">
+    <input type="Button" value="=" onclick="calculate()">
+    <input type="Button" value="+" onclick="oprKey('+')"> <br>
+  </FORM>
+  
+  <script>
+    var currentNum = '';
+    var previousNum = '';
+    var expression = '';
+    var opr = null;
+    var memory = 0;
+
+
+    function display(value) { 
+        document.forms['mycalc']['mydisp'].value = value; 
+    }
+
+    function digitKey(key) {
+        if (key === '.' && currentNum.includes('.')) return;  // prevent entering more than one '.'
+        currentNum += key;
+        display(currentNum);
+}
+
+    function oprKey(key) {
+        if (currentNum === '') {
+            if (expression.endsWith(')')) {
+                expression += key;
+            }
+            else if (previousNum !== '') {
+                opr = key;  // if there's already an operator, replace it with the new one
+            }
+            return;
+        }
+    
+        // Only auto-calculate for operators when there's no parenthesis in expression
+        if (previousNum !== '' && !expression.includes('(')) calculate();
+    
+        opr = key;
+        previousNum = currentNum;
+        currentNum = '';
+        expression += previousNum + opr;
+    }
+
+
+
+    function calculate() {
+        if (currentNum !== '') {
+            expression += currentNum;
+            currentNum = '';
+        }
+
+        if (expression) {
+            // console.log("Expression before eval: ", expression);  // debug print
+            currentNum = eval(expression).toString();
+            display(currentNum);
+            expression = '';
+            previousNum = '';
+            opr = null;
+        }
+    }
+
+
+
+    function clearDisplay() {
+        currentNum = '';
+        expression = '';
+        display('0');
+    }
+
+    function memoryStore() {
+        memory = parseFloat(document.forms['mycalc']['mydisp'].value);
+    }
+
+    function memoryRecall() {
+        currentNum = memory.toString();
+        display(currentNum);
+    }
+
+    function memoryClear() {
+        memory = 0;
+    }
+
+    function parenKey(key) {
+        if (currentNum !== '') {
+            expression += currentNum;
+            currentNum = '';
+        }
+        expression += key;
+        if (key === ')' && previousNum !== '') calculate();
+    }
+  </script>
+  
+  <style>
+    input {
+        height: 50px;
+        width: 50px;
+        padding: 5px 5px 5px 5px;
+        font-size: 18px;
+     }
+        input[type=text] {
+            height: 30px; width: 230px; font-size: 18px;}
+        form { 
+            width: 230px;
+            border: solid #5B6DCD 10px; }
+   </style>
+   

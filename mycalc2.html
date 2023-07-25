@@ -1,0 +1,114 @@
+<form name="RPNcalc">
+  <input name="RPNdisp" type="Text" size=10 value="0" > <br>
+  <input type="Button" value="1" onclick="handleToken('1')">
+  <input type="Button" value="2" onclick="handleToken('2')">
+  <input type="Button" value="3" onclick="handleToken('3')"> 
+  <input type="Button" value="x" onclick="handleToken('*')"> <br>
+  <input type="Button" value="4" onclick="handleToken('4')">
+  <input type="Button" value="5" onclick="handleToken('5')">
+  <input type="Button" value="6" onclick="handleToken('6')">
+  <input type="Button" value="-" onclick="handleToken('-')"> <br>
+  <input type="Button" value="7" onclick="handleToken('7')">
+  <input type="Button" value="8" onclick="handleToken('8')">
+  <input type="Button" value="9" onclick="handleToken('9')"> 
+  <input type="Button" value="+" onclick="handleToken('+')"> <br>
+  <input type="Button" value="0" onclick="handleToken('0')">
+  <input type="Button" value="." onclick="handleToken('.')">
+  <input type="Button" value="Enter" onclick="enterKey()"> 
+  <input type="Button" value="/" onclick="handleToken('/')"> <br>
+  <input type="Button" value="MS" onclick="memoryStore()">
+  <input type="Button" value="MR" onclick="memoryRecall()">
+  <input type="Button" value="MC" onclick="memoryClear()">
+  <input type="Button" value="C" onclick="clearDisplay()"> <br>
+</form>
+
+<script>
+  const stack = [];
+  let currentNum = '';
+  let memory = 0;
+
+  function display(value) {
+    document.forms['RPNcalc']['RPNdisp'].value = value;
+  }
+
+  function handleToken(token) {
+    if (token === '.' || !isNaN(parseFloat(token))) {
+      currentNum += token;
+      display(currentNum);
+      return;
+    }
+
+    if (currentNum !== '') {
+      stack.push(parseFloat(currentNum));
+      currentNum = '';
+    }
+
+    if (stack.length >= 2) {
+        const right = parseFloat(stack.pop());
+        const left = parseFloat(stack.pop());
+
+        switch (token) {
+          case '+': // Addition
+            stack.push(left + right);
+            break;
+          case '-': // Subtraction
+            stack.push(left - right);
+            break;
+          case '*': // Multiplication
+            stack.push(left * right);
+            break;
+          case '/': // Division
+            stack.push(left / right);
+            break;
+        }
+    }
+    display(stack[stack.length-1]);
+}
+
+
+function enterKey() {
+    if (currentNum !== '') {
+        stack.push(parseFloat(currentNum));
+        currentNum = '';
+    }
+    display(stack[stack.length-1]);
+}
+
+
+  function memoryStore() {
+    memory = stack[stack.length-1];
+  }
+
+  function memoryRecall() {
+    stack.push(memory);
+    display(memory);
+  }
+
+  function memoryClear() {
+    memory = 0;
+  }
+
+  function clearDisplay() {
+    while (stack.length > 0) {
+      stack.pop();
+    }
+    display('0');
+  }
+</script>
+
+<style>
+  input {
+    height: 50px;
+    width: 50px;
+    padding: 5px 5px 5px 5px;
+    font-size: 18px;
+   }
+   input[type=text] {
+     height: 30px; width: 230px; font-size: 18px;}
+   form { 
+     width: 230px;
+     border: solid #5B6DCD 10px; }
+ </style>
+
+</body>
+</html>
